@@ -69,7 +69,7 @@ class DeviceState(ControllerBase):
 class SensorData(Resource):
     def get(self):
         try:
-            parser = reqparse.RequestParser(bundle_error=True)
+            parser = reqparse.RequestParser(bundle_errors=True)
             parser.add_argument('deviceId', type=int, required=True, location='args')
             args = parser.parse_args()
 
@@ -102,7 +102,7 @@ class Notification(Resource):
                     device_id = args['device_id'],
                     email = args.get('email'),
                     phone = args.get('phone'),                    
-                    critical_value = args.get['criticalValue']
+                    critical_value = args.get('criticalValue')
                 )
                 db.add(new_setting)
                 db.commit()
