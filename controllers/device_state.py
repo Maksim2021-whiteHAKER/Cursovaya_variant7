@@ -5,6 +5,7 @@ from classes.errors import APIError, ERROR
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound, SQLAlchemyError
 from models.State import AquaState
+from models.NotificationSettings import NotificationSettings
 
 class DeviceState(ControllerBase):
     def get(self):
@@ -69,7 +70,7 @@ class SensorData(Resource):
     def get(self):
         try:
             parser = reqparse.RequestParser(bundle_error=True)
-            parser.add_argument('deviceId', type=int, required=True, Location='args')
+            parser.add_argument('deviceId', type=int, required=True, location='args')
             args = parser.parse_args()
 
             with Session(autoflush=False, bind=self._connection) as db:
@@ -84,3 +85,28 @@ class SensorData(Resource):
                 return {"status": "OK", "data": device.readings}, 200
         except SQLAlchemyError as err:
             return {"status": "ERROR", "message": str(err)}, 500
+
+class Notification(Resource):
+    def post(self):
+        try:
+            parser = reqparse.RequestParser(bundle_errors=True)
+            parser.add_argument('device_id', type=int, required=False, location='json')
+            parser.add_argument('email', type=str, required=False, location='json')
+            parser.add_argument('phone', type=str, required=False, location='json')
+            parser.add_argument('criticalValue', type=float, required=False, location='json')
+            args = parser.parse_args()
+
+            with Session(autoflush=False, bind=self._connection) as db:
+                new_setting = NotificationSettings(
+                    user_id = self.user_id, # Получить из токена(это ключ)
+                    device_id = args['device_id'],
+                    email = args.get('email'),
+                    phone = args.get('phone'),                    
+                    critical_value = args.get['criticalValue']
+                )
+                db.add(new_setting)
+                db.commit()
+
+                return {"status": "OK", "message": 'Notification settings updated'}, 201
+        except SQLAlchemyError as e:
+            return {"status": "ERROR", "message": str(e)}, 500
