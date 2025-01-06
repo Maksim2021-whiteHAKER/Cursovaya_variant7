@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound, SQLAlchemyError
 from models.State import AquaState
 from models.NotificationSettings import NotificationSettings
+from models.logging import log_action
 
 class DeviceState(ControllerBase):
     def get(self):
@@ -47,6 +48,10 @@ class DeviceState(ControllerBase):
                    
                    device.device_status = args['value']
                    db.commit()
+
+                   # Логгирование действия
+                   log_action(self._connection, user_id=self.user_id, action=f"Changed device {device.id} status")
+                   
                    return self.make_response_str(ERROR.OK, device.serialize), 200
              
         except (SQLAlchemyError, Exception) as e:
