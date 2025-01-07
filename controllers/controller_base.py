@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse, abort
+from flask_restful import reqparse, abort
 from classes.errors import APIError, ERROR
 from controllers.controller_unauth import ControllerUnauth
 from sqlalchemy.orm import Session

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from models.User import User
 from hashlib import sha256
 
-class SignIn(ControllerUnauth):
+class TokenRefresh(ControllerUnauth):
     def __init__(self, **kwargs):
         if 'connection' in kwargs:
             self._connection = kwargs['connection']
@@ -18,40 +18,37 @@ class SignIn(ControllerUnauth):
     def post(self):
         try:
             parser = reqparse.RequestParser(bundle_errors=True)
-            parser.add_argument('phone', required=True, type=str,location='json') 
-            parser.add_argument('password', required=True, type=str,location='json')
+            parser.add_argument('refresh_token', required=True, type=str,location='json') 
             args = parser.parse_args()
 
             with Session(autoflush=False, bind=self._connection) as db:
-                #создаем объект Person для добавления в бд
-                user = db.query(User).filter(User.phone == args['phone']).one()
+                # Поиск пользователя по обновленному ключу(token)
+                refresh_token_hash = sha256(args['refresh_token'].encode('utf-8')).hexdigest()
+                user = db.query(User).filter(User.hash_token == refresh_token_hash).one()
 
-                if not self._bcrypt.check_password_hash(user.password, args['password']):
+                if not user:
                     return self.make_response_str(ERROR.UNVALID_USER), 401
                 
                 # token(ключ) доступа
                 access_token = secrets.token_hex(32)
                 # refresh - обнова
-                refresh_token = secrets.token_hex(32)
+                new_refresh_token = secrets.token_hex(32)
 
-                user.hash_token = sha256(refresh_token.encode('utf-8')).hexdigest
+                user.hash_token = sha256(new_refresh_token.encode('utf-8')).hexdigest
                 user.token_created = datetime.now()
                 db.commit()
 
                 data = {
                     'access_token': access_token,
-                    'refresh_token': refresh_token,
+                    'refresh_token': new_refresh_token,
                     'access_token_expiration': (datetime.now() + timedelta(minutes=30)).isoformat(),
                 }
                 return self.make_response_str(ERROR.OK, data), 200                
             
         except NoResultFound as e:
-            return self.make_response_str(ERROR.UNVALID_USER), 200
+            return self.make_response_str(ERROR.UNVALID_USER), 401
         except MultipleResultsFound as e:
            return self.make_response_str(ERROR.INTEGRITY_ERROR), 500
         except (SQLAlchemyError, Exception) as e:
             response, code  = self.handle_exceptions(e)
             return response, code
-        
-        # if user.password != sha256(args['password'].encode('utf-8')).hexdigest():
-        #             return self.make_response_str(ERROR.UNVALID_USER), 200

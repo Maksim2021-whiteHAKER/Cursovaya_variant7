@@ -5,6 +5,7 @@ from controllers.signin import SignIn
 from controllers.signup import SignUp
 from controllers.device_state import Notification, SensorData, DeviceErrors
 from app_data.definitions import my_connect
+from controllers.token_refresh import TokenRefresh
 
 def InitRoutes(api, app):
 
@@ -21,3 +22,4 @@ def InitRoutes(api, app):
         api.add_resource(Notification, '/api/notification')
         api.add_resource(SensorData, '/api/sensors')
         api.add_resource(DeviceErrors, '/api/errors', resource_class_kwargs=additional_params)
+        api.add_resource(TokenRefresh, '/api/v1/token', resource_class_kwargs=additional_params)
