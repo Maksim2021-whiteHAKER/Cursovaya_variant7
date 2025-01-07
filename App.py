@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_restful import Resource, Api
+from flask_restful import Api
 from Routers import InitRoutes
 from flask_bcrypt import Bcrypt
 
@@ -15,3 +15,6 @@ InitRoutes(api, app)
         
 if __name__ == '__main__':
     app.run('0.0.0.0', 5000, debug=True)
+
+# ExecStart=
+# ExecStart=/usr/sbin/mysqld --daemonize --pid-file=/run/mysqld/mysqld.pid --skip-grant-tables --skip-networking

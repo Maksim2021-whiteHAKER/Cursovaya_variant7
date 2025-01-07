@@ -19,7 +19,7 @@ class SignUp(Resource):
             parser.add_argument('role', required=True, type=str, choices=['user', 'admin'], location='json')
             args = parser.parse_args()
 
-            hashed_password = self._bcrypt.generate_password_hash(args['password'].encode('utf-8'))
+            hashed_password = self._bcrypt.generate_password_hash(args['password']).encode('utf-8')
 
             with session (autoflush=False, bind=self._connection) as db:
                 new_user = User(

@@ -19,5 +19,14 @@ class User(Base):
     @property
     def serialize(self):
         return {
-            
+            'id': self.id,
+            'surname': self.surname,
+            'firstname': self.firstname,
+            'middlename': self.middlename,
+            'phone': self.phone,
+            'password': self.password,
+            'hash_token': self.hash_token,
+            'token_created': self.token_created,
+            'user_role': self.user_role,
+            'role': self.role            
         }
