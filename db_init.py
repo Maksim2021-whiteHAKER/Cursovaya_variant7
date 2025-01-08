@@ -18,7 +18,7 @@ with Session(autoflush=False, bind=my_connect) as db:
         middlename = 'Ivanovich',
         phone = '89121234567',
         email = 'ivanov@mail.ru',
-        password = '123',
+        password = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
         hash_token =  None,
         token_created = None )
     db.add(user)     # добавляем в бд
@@ -39,6 +39,7 @@ with Session(autoflush=False, bind=my_connect) as db:
         device_type = 'sensor',
         device_status = 25,
     )
+    
     db.add_all([d1, d2, d3])
     db.commit()     # сохраняем изменения
     print(user.id)   # можно получить установленный id
