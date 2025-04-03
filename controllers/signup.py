@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse 
-from sqlalchemy.orm import session
+from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from models.User import User
 

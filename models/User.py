@@ -15,6 +15,8 @@ class User(Base):
     token_created = Column(DateTime(), nullable=True)
     user_role = Column(Integer, ForeignKey('role.role_id'), nullable=True)
     role = relationship('Role', back_populates='users')
+    devices = relationship('AquaState', back_populates='owner')
+    logs = relationship('Log', back_populates='user')
 
     @property
     def serialize(self):
