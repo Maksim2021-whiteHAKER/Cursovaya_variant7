@@ -18,11 +18,11 @@ def InitRoutes(api, app):
         api.add_resource(SiteHello, '/')                                                             # V
         api.add_resource(SayHello, '/api/v1/hello')                                                  # V
         api.add_resource(ServerVersion, '/api/version')                                              # V
-        api.add_resource(DeviceState, '/api/v1/state', resource_class_kwargs=additional_params)      # V
+        api.add_resource(DeviceState, '/api/v1/devices', resource_class_kwargs=additional_params)    # V
         api.add_resource(SignIn, '/api/v1/auth', resource_class_kwargs=additional_params)            # V
         api.add_resource(SignUp, '/api/v1/signup', resource_class_kwargs=additional_params)          # V
-        api.add_resource(Notification, '/api/notification', resource_class_kwargs=additional_params) # V
-        api.add_resource(SensorData, '/api/sensors', resource_class_kwargs=additional_params)        # V
-        api.add_resource(DeviceErrors, '/api/errors', resource_class_kwargs=additional_params)       # V
-        api.add_resource(TokenRefresh, '/api/v1/token', resource_class_kwargs=additional_params)     # V
-        api.add_resource(AdminLogs, '/api/admin/logs', resource_class_kwargs=additional_params)      # V "logs": []
+        api.add_resource(Notification, '/api/v1/notification', resource_class_kwargs=additional_params) # V
+        api.add_resource(SensorData, '/api/v1/sensors', resource_class_kwargs=additional_params)        # V
+        api.add_resource(DeviceErrors, '/api/v1/errors', resource_class_kwargs=additional_params)       # V
+        api.add_resource(TokenRefresh, '/api/v1/token', resource_class_kwargs=additional_params)        # V
+        api.add_resource(AdminLogs, '/api/v1/admin/logs', resource_class_kwargs=additional_params)      # V 
