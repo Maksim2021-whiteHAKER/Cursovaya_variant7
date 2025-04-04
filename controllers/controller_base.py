@@ -2,7 +2,10 @@ from flask_restful import reqparse, abort
 from classes.errors import APIError, ERROR
 from controllers.controller_unauth import ControllerUnauth
 from sqlalchemy.orm import Session
-from models.User import User
+from models.user import User
+from hashlib import sha256
+from flask import session
+from datetime import datetime, timedelta
 
 class ControllerBase(ControllerUnauth):
     parser = reqparse.RequestParser(bundle_errors=True)
@@ -32,12 +35,11 @@ class ControllerBase(ControllerUnauth):
     #проверка токена
        # Проверка токена в БД пользователей
     def is_valid_token(self, token):
-        # TODO: Использовать готовый класс валидатора
+        if 'access_token' in session and session['access_token'] == token:
+            return True
         with Session(autoflush=False, bind=self._connection) as db:
-            user = db.query(User)\
-                .filter(
-                    User.token_hash == token
+            user = db.query(User).filter(
+                User.hash_token == token,
+                User.token_created >= datetime.now() - timedelta(minutes=30)
                 ).first()
-            if user == None:
-                return False
-        return True
+            return user is not None

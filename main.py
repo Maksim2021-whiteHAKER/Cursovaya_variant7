@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 from scheduler import start_scheduler
 
 app = Flask(__name__)
+app.secret_key = 'secret'
 api = Api(app)
 bcrypt = Bcrypt(app)
 app.bcrypt = bcrypt

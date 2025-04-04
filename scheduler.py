@@ -1,6 +1,6 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from services.checker_service import check_device_thresholds
-from app_data.definitions import my_connect
+from app_data.db_config import my_connect
 from sqlalchemy.orm import Session
 
 def start_scheduler():

@@ -1,12 +1,12 @@
 from flask_restful import Resource, reqparse
 from controllers.controller_base import ControllerBase
-from app_data.devices_data import get_device_data, set_device_data
+from app_data.devices_manager import get_device_data, set_device_data
 from classes.errors import APIError, ERROR
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound, SQLAlchemyError
-from models.State import AquaState
-from models.NotificationSettings import NotificationSettings
-from models.logging import log_action
+from models.state import AquaState
+from models.notification_settings import NotificationSettings
+from services.action_logger import log_action
 
 class DeviceState(ControllerBase):
     def get(self):

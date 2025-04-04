@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models.log import Log
+from models.log_config import Log
 
 def log_action(db: Session, user_id: int, action: str):
     """

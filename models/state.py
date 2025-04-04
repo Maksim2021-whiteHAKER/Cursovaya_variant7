@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, SmallInteger, ForeignKey, Enum, Float
 from sqlalchemy.orm import relationship
-from app_data.definitions import Base
+from app_data.db_config import Base
 
 class AquaState(Base):
     __tablename__ = "devices"  # Более точное имя таблицы
@@ -12,10 +12,12 @@ class AquaState(Base):
     value = Column(Float)  # Для числовых показаний датчиков
     error_code = Column(String(20), nullable=True)
     owner_id = Column(Integer, ForeignKey('users.id'))
+    owner = relationship("User", back_populates="devices")
     
     # Связи
     notifications = relationship("NotificationSettings", back_populates="device")
     
+    @property
     def serialize(self):
         return {
             'id': self.id,

@@ -28,6 +28,16 @@ class APIError:
     }
 
     @staticmethod
+    def err(error: ERROR) -> str:
+        """
+        Возвращает текстовое описание ошибки по её Enum значению.
+        Аналог from_enum, но с более коротким именем для удобства.
+        """
+        return APIError.errors.get(error.value, "Неизвестная ошибка")
+
+        
+
+    @staticmethod
     def get_message(error_code: int) -> str:
         """
         Возвращает текстовое описание ошибки по её коду.

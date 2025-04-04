@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound, SQLAlchemyError
 import secrets
 from datetime import datetime
-from models.User import User
+from models.user import User
 from hashlib import sha256
 
 # class SignOut(ControllerUnauth):

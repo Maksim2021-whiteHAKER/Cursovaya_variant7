@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from app_data.definitions import Base
+from app_data.db_config import Base
 
 class Role(Base):
     __tablename__ = 'role'

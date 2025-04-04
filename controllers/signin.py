@@ -2,10 +2,11 @@ from flask_restful import reqparse
 from classes.errors import ERROR
 from controllers.controller_unauth import ControllerUnauth
 from sqlalchemy.orm import Session
+from flask import session
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound, SQLAlchemyError
 import secrets
 from datetime import datetime, timedelta
-from models.User import User
+from models.user import User
 from hashlib import sha256
 
 class SignIn(ControllerUnauth):
@@ -27,15 +28,19 @@ class SignIn(ControllerUnauth):
                 user = db.query(User).filter(User.phone == args['phone']).one()
 
                 if not self._bcrypt.check_password_hash(user.password, args['password']):
-                    return self.make_response_str(ERROR.UNVALID_USER), 401
+                    return self.make_response_str(ERROR.UNAUTHORIZED), 401
                 
                 # token(ключ) доступа
                 access_token = secrets.token_hex(32)
                 # refresh - обнова
                 refresh_token = secrets.token_hex(32)
 
-                user.hash_token = sha256(refresh_token.encode('utf-8')).hexdigest
+                user.hash_token = access_token
                 user.token_created = datetime.now()
+
+                # добавляем сессионую аутентификацию
+                session['user_id'] = user.id
+                session['access_token'] = access_token
                 db.commit()
 
                 data = {
@@ -46,9 +51,9 @@ class SignIn(ControllerUnauth):
                 return self.make_response_str(ERROR.OK, data), 200                
             
         except NoResultFound as e:
-            return self.make_response_str(ERROR.UNVALID_USER), 200
+            return self.make_response_str(ERROR.OBJ_NOT_FOUND), 401
         except MultipleResultsFound as e:
-           return self.make_response_str(ERROR.INTEGRITY_ERROR), 500
+           return self.make_response_str(ERROR.INTERNAL_ERROR), 500
         except (SQLAlchemyError, Exception) as e:
             response, code  = self.handle_exceptions(e)
             return response, code

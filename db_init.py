@@ -1,10 +1,17 @@
-from models.User import User
-from models.State import AquaState
 #from app_data.definitions import my_connect
-from app_data.definitions import Base
+from models.user import User
+from models.state import AquaState
+from app_data.db_config import Base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
+from flask_bcrypt import Bcrypt
 
+bcrypt = Bcrypt()
+
+passwordForUser1 = "1569"
+passwordForUser2 = "6841" # for phone 79651284649, 
+
+hashPass = bcrypt.generate_password_hash(passwordForUser1).decode('utf-8')
 
 connection_str = "mysql+pymysql://user:password+@localhost/aqua_db"
 my_connect = create_engine(connection_str)
@@ -18,26 +25,26 @@ with Session(autoflush=False, bind=my_connect) as db:
         middlename = 'Ivanovich',
         phone = '89121234567',
         email = 'ivanov@mail.ru',
-        password = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
+        password = hashPass,
         hash_token =  None,
         token_created = None )
     db.add(user)     # добавляем в бд
 
 
     d1 = AquaState(
-        device_name = 'Air pump',
-        device_type = 'switch',
-        device_status = 0,
+        name = 'Air pump',
+        type = 'switch',
+        status = 0,
     )
     d2 = AquaState(
-        device_name = 'Light',
-        device_type = 'switch',
-        device_status = 0,
+        name = 'Light',
+        type = 'switch',
+        status = 0,
     )
     d3 = AquaState(
-        device_name = 'Temperature sensor',
-        device_type = 'sensor',
-        device_status = 25,
+        name = 'Temperature sensor',
+        type = 'temperature',
+        status = 25,
     )
     
     db.add_all([d1, d2, d3])
