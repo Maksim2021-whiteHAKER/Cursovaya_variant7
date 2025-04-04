@@ -7,7 +7,6 @@ from sqlalchemy.exc import MultipleResultsFound, NoResultFound, SQLAlchemyError
 import secrets
 from datetime import datetime, timedelta
 from models.user import User
-from hashlib import sha256
 
 class SignIn(ControllerUnauth):
     def __init__(self, **kwargs):
@@ -35,7 +34,7 @@ class SignIn(ControllerUnauth):
                 # refresh - обнова
                 refresh_token = secrets.token_hex(32)
 
-                user.hash_token = access_token
+                user.hash_token = refresh_token
                 user.token_created = datetime.now()
 
                 # добавляем сессионую аутентификацию
@@ -57,6 +56,3 @@ class SignIn(ControllerUnauth):
         except (SQLAlchemyError, Exception) as e:
             response, code  = self.handle_exceptions(e)
             return response, code
-        
-        # if user.password != sha256(args['password'].encode('utf-8')).hexdigest():
-        #             return self.make_response_str(ERROR.UNVALID_USER), 200

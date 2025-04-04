@@ -43,10 +43,10 @@ class DeviceState(ControllerBase):
                    if device == None:
                     return self.make_response_str(ERROR.UNKNOWN_DEVICE), 200 
                    
-                   if device.device_type == 'sensor':
+                   if device.type == 'sensor':
                     return self.make_response_str(ERROR.UNABLE_CHANGE), 200      
                    
-                   device.device_status = args['value']
+                   device.status = args['value']
                    db.commit()
 
                    # Логгирование действия

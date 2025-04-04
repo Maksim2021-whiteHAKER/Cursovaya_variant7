@@ -3,7 +3,6 @@ from classes.errors import APIError, ERROR
 from controllers.controller_unauth import ControllerUnauth
 from sqlalchemy.orm import Session
 from models.user import User
-from hashlib import sha256
 from flask import session
 from datetime import datetime, timedelta
 
@@ -46,7 +45,4 @@ class ControllerBase(ControllerUnauth):
             if user:
                 self.user_id = user.id 
                 return True
-        return False
-                
-
-        
+        return False    
