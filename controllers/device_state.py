@@ -131,11 +131,20 @@ class Notification(ControllerBase):
         except SQLAlchemyError as e:
             return {"status": "ERROR", "message": str(e)}, 500
 
-class DeviceErrors(Resource):
+class DeviceErrors(ControllerBase):
     def get(self):
         try:
             with Session(autoflush=False, bind=self._connection) as db:
                 errors = db.query(AquaState).filter(AquaState.error_code.isnot(None)).all()
-                return [error.serialize for error in errors], 200
+
+                if not errors:
+                    return self.make_response_str(
+                        ERROR.OK,
+                        message="Активных ошибок не обнаружено",
+                        data=[]
+                        ), 200
+                return self.make_response_str(
+                    ERROR.OK,
+                    data=[error.serialize for error in errors]), 200
         except SQLAlchemyError as e:
-             return {"status": "ERROR", "message": str(e)}, 500
+             return self.handle_exceptions(e)
