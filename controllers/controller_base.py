@@ -36,10 +36,17 @@ class ControllerBase(ControllerUnauth):
        # Проверка токена в БД пользователей
     def is_valid_token(self, token):
         if 'access_token' in session and session['access_token'] == token:
+            self.user_id = session['user_id']
             return True
         with Session(autoflush=False, bind=self._connection) as db:
             user = db.query(User).filter(
                 User.hash_token == token,
                 User.token_created >= datetime.now() - timedelta(minutes=30)
-                ).first()
-            return user is not None
+            ).first()
+            if user:
+                self.user_id = user.id 
+                return True
+        return False
+                
+
+        

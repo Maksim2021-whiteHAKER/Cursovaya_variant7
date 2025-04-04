@@ -91,14 +91,14 @@ class SensorData(Resource):
         except SQLAlchemyError as err:
             return {"status": "ERROR", "message": str(err)}, 500
 
-class Notification(Resource):
+class Notification(ControllerBase):
     def post(self):
         try:
             parser = reqparse.RequestParser(bundle_errors=True)
             parser.add_argument('device_id', type=int, required=False, location='json')
             parser.add_argument('email', type=str, required=False, location='json')
             parser.add_argument('phone', type=str, required=False, location='json')
-            parser.add_argument('criticalValue', type=float, required=False, location='json')
+            parser.add_argument('threshold', type=float, required=False, location='json')
             args = parser.parse_args()
 
             with Session(autoflush=False, bind=self._connection) as db:
@@ -107,7 +107,7 @@ class Notification(Resource):
                     device_id = args['device_id'],
                     email = args.get('email'),
                     phone = args.get('phone'),                    
-                    critical_value = args.get('criticalValue')
+                    threshold = args.get('threshold')
                 )
                 db.add(new_setting)
                 db.commit()
