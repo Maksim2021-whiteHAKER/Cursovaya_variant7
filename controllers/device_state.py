@@ -71,7 +71,7 @@ class DeviceState(ControllerBase):
             responce, code = self.handle_exceptions(err)
             return responce, code
         
-class SensorData(Resource):
+class SensorData(ControllerBase):
     def get(self):
         try:
             parser = reqparse.RequestParser(bundle_errors=True)
@@ -84,12 +84,27 @@ class SensorData(Resource):
                 if device is None:
                     return {"status": "ERROR", "message": "device not found"}, 404
                 
-                if device.device_type != 'sensor':
-                    return {"status": "ERROR", "message": "Not a sensor device"}, 400
+                if device.type == 'switch':
+                    return self.make_response_str(
+                        ERROR.UNABLE_CHANGE,
+                        message = "Устройство является переключателем, а не датчиком",
+                        data = {"device.type": device.type}), 400
                 
-                return {"status": "OK", "data": device.readings}, 200
+                return self.make_response_str(
+                    ERROR.OK, {
+                        "value": device.value, 
+                        "type": device.type, 
+                        "unit":self._get_unit(device.type)}), 200
         except SQLAlchemyError as err:
             return {"status": "ERROR", "message": str(err)}, 500
+    def _get_unit(self, device_type):
+        units = {
+            'temperature': '°C',
+            'humidity': '%',
+            'pressure': 'hPa'
+        }
+        return units.get(device_type, 'units')
+
 
 class Notification(ControllerBase):
     def post(self):

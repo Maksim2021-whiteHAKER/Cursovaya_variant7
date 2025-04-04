@@ -22,7 +22,7 @@ def InitRoutes(api, app):
         api.add_resource(SignIn, '/api/v1/auth', resource_class_kwargs=additional_params)            # V
         api.add_resource(SignUp, '/api/v1/signup', resource_class_kwargs=additional_params)          # V
         api.add_resource(Notification, '/api/notification', resource_class_kwargs=additional_params) # V
-        api.add_resource(SensorData, '/api/sensors', resource_class_kwargs=additional_params)        # "deviceId": "Missing required parameter in the query string"
+        api.add_resource(SensorData, '/api/sensors', resource_class_kwargs=additional_params)        # V
         api.add_resource(DeviceErrors, '/api/errors', resource_class_kwargs=additional_params)       # TypeError: DeviceErrors() takes no argument
         api.add_resource(TokenRefresh, '/api/v1/token', resource_class_kwargs=additional_params)     # не авторизован
         api.add_resource(AdminLogs, '/api/admin/logs', resource_class_kwargs=additional_params)      # V "logs": []
