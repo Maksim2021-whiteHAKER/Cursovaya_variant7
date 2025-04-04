@@ -58,7 +58,7 @@ class DeviceState(ControllerBase):
             response, code  = self.handle_exceptions(e)
             return response, code
         
-    def get_device(self, user_role, user_id):
+    def get(self, user_role, user_id):
         try:
             with Session(autoflush=False, bind=self._connection) as db:
                 if user_role == "admin":
