@@ -10,54 +10,59 @@ from services.action_logger import log_action
 
 class DeviceState(ControllerBase):
     def get(self):
+        db = None
         try:
             parser = DeviceState.parser.copy()
             parser.add_argument('deviceId', type=int, location='args', required=True)
             args = parser.parse_args()  
 
-            with Session(autoflush=False, bind=self._connection) as db:
-                #оздаем объект Person для добавления в бд
-                device = db.query(AquaState)\
-                    .filter(
-                        AquaState.id == args['deviceId']
-                    ).first()
-            if device != None:
-                return self.make_response_str(ERROR.OK, device.serialize), 200
-            return self.make_response_str(ERROR.UNKNOWN_DEVICE), 200
+            db = Session(bind=self._connection)
+            device = db.query(AquaState).filter(AquaState.id == args['deviceId']).first()
+
+            if not device:
+                return self.make_response_str(ERROR.UNKNOWN_DEVICE), 200
+            
+            return self.make_response_str(ERROR.OK, device.serialize), 200
+
         except (SQLAlchemyError, Exception) as e:
-            response, code  = self.handle_exceptions(e)
-            return response, code
+            if db: db.rollback()
+            return self.handle_exceptions(e)
+        finally:
+            if db: db.close()
             
             
     def post(self):
+        db = None
         try:
              parser = DeviceState.parser.copy()
              parser.add_argument('deviceId', type=int, location='json', required=True)    
              parser.add_argument('value', type=int, location='json', required=True)  
              args = parser.parse_args()
 
-             with Session(autoflush=False, bind=self._connection) as db:  #Cоздаем объект Person для добавления в бд
-                   device = db.query(AquaState)\
-                .filter(AquaState.id == args['deviceId']).first()
+             db = Session(bind=self._connection)
+             device = db.query(AquaState).filter(AquaState.id == args['deviceId']).first()
                    
-                   if device == None:
-                    return self.make_response_str(ERROR.UNKNOWN_DEVICE), 200 
+             if not device:
+                return self.make_response_str(ERROR.UNKNOWN_DEVICE), 200 
                    
-                   if device.type == 'sensor':
-                    return self.make_response_str(ERROR.UNABLE_CHANGE), 200      
+             if device.type == 'sensor':
+                return self.make_response_str(ERROR.UNABLE_CHANGE), 200      
                    
-                   device.status = args['value']
-                   db.commit()
+             device.status = args['value']
+             db.commit()
 
-                   # Логгирование действия
-                   log_action(self._connection, user_id=self.user_id, action=f"Changed device {device.id} status")
+             # Логгирование действия
+             log_action(self._connection, user_id=self.user_id, action=f"Changed device {device.id} status")
                    
-                   return self.make_response_str(ERROR.OK, device.serialize), 200
+             return self.make_response_str(ERROR.OK, device.serialize), 200
              
         except (SQLAlchemyError, Exception) as e:
-            response, code  = self.handle_exceptions(e)
-            return response, code
-        
+            if db: db.rollback()
+            return self.handle_exceptions(e)
+        finally: 
+            if db: db.close()
+
+class DeviceList(ControllerBase):        
     def get(self, user_role, user_id):
         try:
             with Session(autoflush=False, bind=self._connection) as db:
@@ -67,8 +72,9 @@ class DeviceState(ControllerBase):
                     devices = db.query(AquaState).filter(AquaState.owner_id == user_id).all()
                 
                 return [device.serialize for device in devices], 200
-        except SQLAlchemyError as err:
-            responce, code = self.handle_exceptions(err)
+            
+        except SQLAlchemyError as e:
+            responce, code = self.handle_exceptions(e)
             return responce, code
         
 class SensorData(ControllerBase):
