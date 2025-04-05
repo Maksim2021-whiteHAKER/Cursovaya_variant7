@@ -5,6 +5,8 @@ from app_data.db_config import Base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from flask_bcrypt import Bcrypt
+from models.log_config import Log
+from datetime import datetime
 
 bcrypt = Bcrypt()
 
@@ -50,3 +52,13 @@ with Session(autoflush=False, bind=my_connect) as db:
     db.add_all([d1, d2, d3])
     db.commit()     # сохраняем изменения
     print(user.id)   # можно получить установленный id
+ 
+    # user_id = db.query(User.id).first()[0]
+    
+    # new_log = Log(
+    #     user_id=user_id,  # Используем реальный ID
+    #     action="Тестовое действие",
+    #     timestamp=datetime.now()
+    # )
+    # db.add(new_log)
+    # db.commit()

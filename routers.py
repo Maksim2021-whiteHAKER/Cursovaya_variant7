@@ -15,12 +15,12 @@ def InitRoutes(api, app):
                     'bcrypt': app.bcrypt # Доступ к bcrypt 
         }
 
-        api.add_resource(SiteHello, '/')                                                             # V
-        api.add_resource(SayHello, '/api/v1/hello')                                                  # V
-        api.add_resource(ServerVersion, '/api/version')                                              # V
-        api.add_resource(DeviceState, '/api/v1/devices', resource_class_kwargs=additional_params)    # V
-        api.add_resource(SignIn, '/api/v1/auth', resource_class_kwargs=additional_params)            # V
-        api.add_resource(SignUp, '/api/v1/signup', resource_class_kwargs=additional_params)          # V
+        api.add_resource(SiteHello, '/')                                                                # V
+        api.add_resource(SayHello, '/api/v1/hello')                                                     # V
+        api.add_resource(ServerVersion, '/api/version')                                                 # V
+        api.add_resource(DeviceState, '/api/v1/devices', resource_class_kwargs=additional_params)       # V
+        api.add_resource(SignIn, '/api/v1/auth', resource_class_kwargs=additional_params)               # V
+        api.add_resource(SignUp, '/api/v1/signup', resource_class_kwargs=additional_params)             # V
         api.add_resource(Notification, '/api/v1/notification', resource_class_kwargs=additional_params) # V
         api.add_resource(SensorData, '/api/v1/sensors', resource_class_kwargs=additional_params)        # V
         api.add_resource(DeviceErrors, '/api/v1/errors', resource_class_kwargs=additional_params)       # V
